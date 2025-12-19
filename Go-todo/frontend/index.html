@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Go TodoList</title>
+    <link href="/static/output.css" rel="stylesheet">
+</head>
+
+<body class="bg-slate-100 p-8">
+
+    <div class="max-w-xl mx-auto">
+
+        <h1 class="text-3xl font-bold text-blue-600 text-center">TodoList!</h1>
+
+        <form id="new-todo-form" class="mt-6 flex space-x-2">
+            <input type="text" id="todo-name-input" placeholder="输入名称..."
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required>
+            <input type="text" id="todo-description-input" placeholder="输入描述 (可选)..."
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                添加
+            </button>
+        </form>
+
+        <ul id="todo-list" class="mt-4 space-y-2">
+        </ul>
+
+        <script src="/static/main.js" type="module"></script>
+
+    </div>
+</body>
+
+</html>
