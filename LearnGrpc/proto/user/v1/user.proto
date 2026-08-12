@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package learngrpc.user.v1;
+
+option go_package = "learngrpc/gen/user/v1;userv1";
+
+// UserService 用户服务。
+// 演示：Unary RPC（CreateUser / GetUser）和 服务端流式 RPC（ListUsers）。
+service UserService {
+  // CreateUser 创建用户（Unary）
+  rpc CreateUser(CreateUserRequest) returns (User);
+  // GetUser 根据 id 获取用户（Unary）
+  rpc GetUser(GetUserRequest) returns (User);
+  // ListUsers 列出用户（Server streaming，服务端持续推流）
+  rpc ListUsers(ListUsersRequest) returns (stream User);
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  // 创建时间，Unix 秒
+  int64 created_at = 4;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message ListUsersRequest {
+  // 每页数量
+  int32 page_size = 1;
+}

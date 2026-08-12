@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package learngrpc.order.v1;
+
+option go_package = "learngrpc/gen/order/v1;orderv1";
+
+// OrderService 订单服务。
+// 它本身是一个 gRPC 服务端，同时也会作为 gRPC 客户端去调用
+// user-service 与 product-service，从而演示“服务间调用”。
+// 演示：Unary RPC（CreateOrder / GetOrder）、双向流式 RPC（StreamOrderUpdates）。
+service OrderService {
+  // CreateOrder 创建订单（内部会先调用 user-service 校验用户、
+  // 再调用 product-service 校验库存，这是核心的服务间调用演示）
+  rpc CreateOrder(CreateOrderRequest) returns (Order);
+  // GetOrder 查询订单（Unary）
+  rpc GetOrder(GetOrderRequest) returns (Order);
+  // StreamOrderUpdates 订单状态更新（Bidirectional streaming，双向流）
+  rpc StreamOrderUpdates(stream OrderQuery) returns (stream OrderUpdate);
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_PAID = 2;
+  ORDER_STATUS_SHIPPED = 3;
+}
+
+message OrderItem {
+  string product_id = 1;
+  int32 quantity = 2;
+  // 成交单价（分）
+  int64 price_cents = 3;
+}
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  repeated OrderItem items = 3;
+  int64 total_cents = 4;
+  OrderStatus status = 5;
+  // 创建时间，Unix 秒
+  int64 created_at = 6;
+}
+
+message CreateOrderRequest {
+  string user_id = 1;
+  repeated OrderItem items = 2;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+// OrderQuery 客户端发起的查询
+message OrderQuery {
+  string order_id = 1;
+}
+
+// OrderUpdate 服务端返回的状态更新
+message OrderUpdate {
+  string order_id = 1;
+  OrderStatus status = 2;
+  string message = 3;
+}

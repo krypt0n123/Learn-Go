@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package learngrpc.product.v1;
+
+option go_package = "learngrpc/gen/product/v1;productv1";
+
+// ProductService 商品/库存服务。
+// 演示：Unary RPC（GetProduct / CheckStock）、服务端流式（ListProducts）、
+// 客户端流式（AdjustStock）。
+service ProductService {
+  // GetProduct 获取商品（Unary）
+  rpc GetProduct(GetProductRequest) returns (Product);
+  // CheckStock 校验库存是否充足（Unary）
+  rpc CheckStock(CheckStockRequest) returns (StockInfo);
+  // ListProducts 列出商品（Server streaming）
+  rpc ListProducts(ListProductsRequest) returns (stream Product);
+  // AdjustStock 批量调整库存（Client streaming，客户端连续推流，服务端最后返回汇总）
+  rpc AdjustStock(stream StockAdjustment) returns (AdjustStockSummary);
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  // 价格，单位：分，避免浮点问题
+  int64 price_cents = 3;
+  int32 stock = 4;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message CheckStockRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message StockInfo {
+  string product_id = 1;
+  bool available = 2;
+  int32 remaining = 3;
+}
+
+message ListProductsRequest {
+  int32 page_size = 1;
+}
+
+// StockAdjustment 单条库存调整
+message StockAdjustment {
+  string product_id = 1;
+  // 正数表示入库，负数表示出库
+  int32 delta = 2;
+}
+
+message AdjustStockSummary {
+  int32 processed = 1;
+  bool ok = 2;
+}
